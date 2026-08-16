@@ -1,0 +1,26 @@
+[
+  {
+    "id": "book-1",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "subject": "Classic Literature",
+    "availableCopies": 3,
+    "status": "Available"
+  },
+  {
+    "id": "book-2",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "subject": "Self-Development",
+    "availableCopies": 2,
+    "status": "Available"
+  },
+  {
+    "id": "book-3",
+    "title": "Data Structures",
+    "author": "Seymour Lipschutz",
+    "subject": "Computer Science",
+    "availableCopies": 1,
+    "status": "On Loan"
+  }
+]

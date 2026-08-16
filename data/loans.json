@@ -1,0 +1,16 @@
+[
+  {
+    "id": "loan-1",
+    "borrowerName": "Anjali Patil",
+    "title": "Data Structures",
+    "dueDate": "2026-08-15",
+    "status": "Active"
+  },
+  {
+    "id": "loan-2",
+    "borrowerName": "Rahul Sharma",
+    "title": "The Great Gatsby",
+    "dueDate": "2026-08-20",
+    "status": "Returned"
+  }
+]

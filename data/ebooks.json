@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "title": "JavaScript Basics",
+    "author": "Himani Mahajan",
+    "category": "Programming",
+    "description": "A beginner-friendly guide to JavaScript fundamentals, variables, loops, functions, and DOM interactions.",
+    "coverImage": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/javascript-basics.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 2,
+    "title": "React for Beginners",
+    "author": "Aisha Patel",
+    "category": "Web Development",
+    "description": "Learn the basics of React components, state, props, hooks, and building interactive user interfaces.",
+    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/react-for-beginners.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 3,
+    "title": "HTML & CSS Guide",
+    "author": "Saurabh Kumar",
+    "category": "Frontend Development",
+    "description": "A practical reference for semantic HTML, CSS layout, responsive design, and styling best practices.",
+    "coverImage": "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/html-css-guide.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 4,
+    "title": "Introduction to Computer Science",
+    "author": "Neha Sharma",
+    "category": "Computer Science",
+    "description": "Covers core computer science concepts including algorithms, data structures, logic, and problem solving.",
+    "coverImage": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/computer-science.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 5,
+    "title": "HTML and CSS Basics",
+    "author": "Saurabh Kumar",
+    "category": "Frontend Development",
+    "description": "Fundamentals of markup and styling: semantic HTML, selectors, layouts, responsiveness, accessibility.",
+    "coverImage": "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/html-css-basics.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 6,
+    "title": "Node.js Basics",
+    "author": "Unknown",
+    "category": "Backend",
+    "description": "Introduction to Node.js, npm, modules, HTTP servers, APIs, and Express.",
+    "coverImage": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/nodejs-basics.pdf",
+    "availability": "Available",
+    "status": "Available"
+  },
+  {
+    "id": 7,
+    "title": "TypeScript Basics",
+    "author": "Unknown",
+    "category": "Programming Languages",
+    "description": "Introduction to TypeScript: types, interfaces, and using TypeScript with React.",
+    "coverImage": "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=900&q=80",
+    "pdfUrl": "/ebooks/typescript-basics.pdf",
+    "availability": "Available",
+    "status": "Available"
+  }
+]

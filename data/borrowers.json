@@ -1,0 +1,16 @@
+[
+  {
+    "id": "borrower-1",
+    "name": "Anjali Patil",
+    "email": "anjali@example.com",
+    "phone": "9876543210",
+    "membership": "Active"
+  },
+  {
+    "id": "borrower-2",
+    "name": "Rahul Sharma",
+    "email": "rahul@example.com",
+    "phone": "9123456780",
+    "membership": "Active"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "user-1",
+    "name": "Himani Mahajan",
+    "role": "Administrator",
+    "email": "himani@example.com",
+    "password": "admin123"
+  },
+  {
+    "id": "user-2",
+    "name": "Asha Deshmukh",
+    "role": "Librarian",
+    "email": "librarian@pratap.com",
+    "password": "librarian123"
+  },
+  {
+    "id": "user-3",
+    "name": "Nikhil Kale",
+    "role": "Checkout Clerk",
+    "email": "clerk@pratap.com",
+    "password": "clerk123"
+  },
+  {
+    "id": "user-4",
+    "name": "Riya Patil",
+    "role": "Student",
+    "email": "student@pratap.com",
+    "password": "s"
+  }
+]
