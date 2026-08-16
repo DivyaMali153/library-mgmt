@@ -4,6 +4,13 @@ html, body {
   background: #f4f7fb;
   color: #0f172a;
   font-family: Inter, Roboto, sans-serif;
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 a {
@@ -13,4 +20,14 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  overscroll-behavior-y: contain;
+}
+
+@media (max-width: 600px) {
+  html, body {
+    overflow-x: hidden;
+  }
 }

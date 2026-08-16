@@ -33,6 +33,39 @@ export default function RequestsPage() {
     load();
   };
 
+  const acceptReturnRequest = async (request, remarks = '') => {
+    const response = await fetch('/api/loans');
+    const loans = await response.json();
+    const loan = loans.find((item) => String(item.id) === String(request.loanId || request.bookId || ''));
+
+    if (loan) {
+      await fetch('/api/loans', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...loan,
+          status: 'Returned',
+          returnDate: new Date().toISOString().slice(0, 10),
+          returnedAt: new Date().toISOString(),
+        }),
+      });
+    }
+
+    await fetch('/api/requests', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...request,
+        status: 'Accepted',
+        librarianRemarks: remarks,
+        handledAt: new Date().toISOString(),
+        returnDate: new Date().toISOString().slice(0, 10),
+      }),
+    });
+
+    load();
+  };
+
   const findBooksForRequest = async (request) => {
     setActiveRequestId(request.id);
     const res = await fetch('/api/books');
@@ -127,7 +160,7 @@ export default function RequestsPage() {
             <TableBody>
               {requests.map((request) => (
                 <TableRow key={request.id}>
-                  <TableCell>{request.requestType === 'ebook' ? 'E-book' : 'Physical Book'}</TableCell>
+                  <TableCell>{request.requestType === 'return' ? 'Return Request' : request.requestType === 'ebook' ? 'E-book' : 'Physical Book'}</TableCell>
                   <TableCell>{request.title}</TableCell>
                   <TableCell>{request.studentName}</TableCell>
                   <TableCell>{request.studentId || '-'}</TableCell>
@@ -143,21 +176,34 @@ export default function RequestsPage() {
                     <TableCell>
                       <Stack direction="row" spacing={1}>
                         {request.status === 'Pending' ? (
-                          <>
-                            <Button size="small" variant="contained" color="success" onClick={() => {
-                              const remarks = window.prompt('Remarks (optional) for acceptance:') || '';
-                              updateStatus(request.id, 'Accepted', remarks);
-                            }}>Accept</Button>
-                            <Button size="small" variant="outlined" color="error" onClick={() => {
-                              const remarks = window.prompt('Remarks (optional) for rejection:') || '';
-                              updateStatus(request.id, 'Rejected', remarks);
-                            }}>Reject</Button>
-                          </>
+                          request.requestType === 'return' ? (
+                            <>
+                              <Button size="small" variant="contained" color="success" onClick={() => {
+                                const remarks = window.prompt('Remarks (optional) for return approval:') || '';
+                                acceptReturnRequest(request, remarks);
+                              }}>Approve Return</Button>
+                              <Button size="small" variant="outlined" color="error" onClick={() => {
+                                const remarks = window.prompt('Remarks (optional) for return rejection:') || '';
+                                updateStatus(request.id, 'Rejected', remarks);
+                              }}>Reject</Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button size="small" variant="contained" color="success" onClick={() => {
+                                const remarks = window.prompt('Remarks (optional) for acceptance:') || '';
+                                updateStatus(request.id, 'Accepted', remarks);
+                              }}>Accept</Button>
+                              <Button size="small" variant="outlined" color="error" onClick={() => {
+                                const remarks = window.prompt('Remarks (optional) for rejection:') || '';
+                                updateStatus(request.id, 'Rejected', remarks);
+                              }}>Reject</Button>
+                            </>
+                          )
                         ) : null}
-                        {request.requestType !== 'ebook' ? (
+                        {request.requestType !== 'ebook' && request.requestType !== 'return' ? (
                           <Button size="small" variant="outlined" onClick={() => findBooksForRequest(request)} disabled={request.status !== 'Pending'}>Find & Issue</Button>
                         ) : null}
-                        {request.requestType !== 'ebook' ? (
+                        {request.requestType !== 'ebook' && request.requestType !== 'return' ? (
                           <Button size="small" variant="outlined" color="error" onClick={() => markNotAvailable(request.id)} disabled={request.status !== 'Pending'}>Mark Not Available</Button>
                         ) : null}
                       </Stack>

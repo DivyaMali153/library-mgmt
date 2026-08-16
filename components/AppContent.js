@@ -6,7 +6,7 @@ import { useRole } from './RoleProvider';
 import AuthScreen from './AuthScreen';
 import { RoleShell } from './RoleShell';
 
-const studentAllowedPaths = ['/', '/books', '/book-history', '/ebooks', '/login'];
+const studentAllowedPaths = ['/', '/books', '/book-history', '/ebooks', '/login', '/requested-books', '/borrowed-books'];
 const librarianAllowedPaths = ['/', '/books', '/ebooks', '/requests', '/borrowers', '/reports', '/profile', '/book-history', '/requested-books', '/borrowed-books', '/login'];
 
 export default function AppContent({ children }) {

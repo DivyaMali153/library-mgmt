@@ -10,7 +10,12 @@ export async function GET(request) {
   const json = await fs.readFile(filePath, 'utf8');
   const loans = JSON.parse(json);
   if (email) {
-    return Response.json(loans.filter((loan) => loan.borrower === email || loan.requestedBy === email));
+    return Response.json(
+      loans.filter((loan) => {
+        const borrowerEmail = (loan.borrower || loan.studentEmail || loan.requestedBy || '').toLowerCase();
+        return borrowerEmail === String(email).toLowerCase();
+      }),
+    );
   }
   return Response.json(loans);
 }
@@ -19,7 +24,12 @@ export async function POST(request) {
   const payload = await request.json();
   const json = await fs.readFile(filePath, 'utf8');
   const loans = JSON.parse(json);
-  const loan = { id: crypto.randomUUID(), ...payload };
+  const loan = {
+    id: crypto.randomUUID(),
+    borrower: payload.borrower || payload.studentEmail || payload.requestedBy || '',
+    borrowerName: payload.borrowerName || payload.studentName || payload.borrower || '',
+    ...payload,
+  };
   loans.push(loan);
   await fs.writeFile(filePath, JSON.stringify(loans, null, 2));
   return Response.json(loan, { status: 201 });

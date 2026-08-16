@@ -1,16 +1,29 @@
 [
   {
-    "id": "loan-1",
-    "borrowerName": "Anjali Patil",
+    "id": "loan-demo-active-1",
+    "bookId": "book-3",
     "title": "Data Structures",
-    "dueDate": "2026-08-15",
-    "status": "Active"
+    "borrower": "student@pratap.com",
+    "borrowerName": "Riya Patil",
+    "studentEmail": "student@pratap.com",
+    "studentName": "Riya Patil",
+    "issueDate": "2026-08-16",
+    "dueDate": "2026-08-30",
+    "status": "Returned",
+    "returnDate": "2026-08-16",
+    "returnedAt": "2026-08-16T12:06:22.411Z"
   },
   {
-    "id": "loan-2",
-    "borrowerName": "Rahul Sharma",
+    "id": "loan-demo-returned-1",
+    "bookId": "book-1",
     "title": "The Great Gatsby",
-    "dueDate": "2026-08-20",
+    "borrower": "student@pratap.com",
+    "borrowerName": "Riya Patil",
+    "studentEmail": "student@pratap.com",
+    "studentName": "Riya Patil",
+    "issueDate": "2026-08-01",
+    "dueDate": "2026-08-15",
+    "returnDate": "2026-08-12",
     "status": "Returned"
   }
 ]

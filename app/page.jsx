@@ -80,17 +80,17 @@ export default function HomePage() {
   }, [books, query]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Paper elevation={0} sx={{ p: 4, borderRadius: 4, background: 'linear-gradient(135deg, #0f766e, #2563eb)' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 }, pb: 4 }}>
+      <Paper elevation={0} sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, background: 'linear-gradient(135deg, #0f766e, #2563eb)' }}>
         <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
           <Box>
-            <Typography variant="overline" color="white" sx={{ letterSpacing: 2 }}>
+            <Typography variant="overline" color="white" sx={{ letterSpacing: 2, fontSize: { xs: '0.65rem', md: '0.72rem' } }}>
               Library Management System
             </Typography>
-            <Typography variant="h4" fontWeight={700} color="white">
+            <Typography variant="h4" fontWeight={700} color="white" sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.4rem' } }}>
               Pratap College, Amalner
             </Typography>
-            <Typography color="rgba(255,255,255,0.86)" sx={{ mt: 1, maxWidth: 700 }}>
+            <Typography color="rgba(255,255,255,0.86)" sx={{ mt: 1, maxWidth: 700, fontSize: { xs: '0.92rem', md: '1rem' } }}>
               {role === 'Librarian'
                 ? 'Manage books, students, requests, loans, and reports from a single dashboard.'
                 : 'Search books, submit requests, track borrowed titles, and stay up to date with notifications.'}
@@ -104,32 +104,32 @@ export default function HomePage() {
 
       {role === 'Student' ? (
         <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Total Borrowed</Typography>
                 <Typography variant="h4" fontWeight={700}>{studentLoans.filter((loan) => loan.status === 'Active').length}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Submitted Requests</Typography>
                 <Typography variant="h4" fontWeight={700}>{submittedRequests}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Pending Requests</Typography>
                 <Typography variant="h4" fontWeight={700}>{pendingStudentRequests}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Due Books</Typography>
                 <Typography variant="h4" fontWeight={700}>{dueBooks}</Typography>
@@ -139,48 +139,48 @@ export default function HomePage() {
         </Grid>
       ) : (
         <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Total Books</Typography>
                 <Typography variant="h4" fontWeight={700}>{totalBooks}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Total Students</Typography>
                 <Typography variant="h4" fontWeight={700}>{totalStudents}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Borrowed Books</Typography>
                 <Typography variant="h4" fontWeight={700}>{activeLoans}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Pending Requests</Typography>
                 <Typography variant="h4" fontWeight={700}>{pendingRequests}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Overdue Books</Typography>
                 <Typography variant="h4" fontWeight={700}>{overdueBooks}</Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Fine Collection</Typography>
                 <Typography variant="h4" fontWeight={700}>₹{totalFine}</Typography>
@@ -191,11 +191,11 @@ export default function HomePage() {
       )}
 
       <Card>
-        <CardContent>
-          <Stack direction={{ xs: 'column', md: 'row' }} alignItems="center" justifyContent="space-between" spacing={2}>
+        <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+          <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'center' }} justifyContent="space-between" spacing={2}>
             <Box>
               <Typography variant="h6" fontWeight={700}>Search books</Typography>
-              <Typography color="text.secondary">Search by title, author, ISBN, or category.</Typography>
+              <Typography color="text.secondary" sx={{ fontSize: { xs: '0.88rem', md: '1rem' } }}>Search by title, author, ISBN, or category.</Typography>
             </Box>
             <TextField
               value={query}
@@ -210,12 +210,12 @@ export default function HomePage() {
           <Stack spacing={1.5} sx={{ mt: 2 }}>
             {searchResults.slice(0, 10).map((item) => (
               <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-                <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems="center">
+                <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', md: 'center' }} spacing={1}>
                   <Box>
                     <Typography fontWeight={700}>{item.title}</Typography>
                     <Typography color="text.secondary">{item.author} • {item.subject || 'General'}</Typography>
                   </Box>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap' }}>
                     <Chip label={item.availableCopies > 0 ? 'Available' : 'Not Available'} color={item.availableCopies > 0 ? 'success' : 'error'} size="small" />
                     <Chip label={item.isbn || 'No ISBN'} size="small" />
                   </Stack>

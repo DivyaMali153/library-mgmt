@@ -19,9 +19,9 @@ function getInitialRole() {
 }
 
 export function RoleProvider({ children }) {
-  const [user, setUser] = useState(getInitialUser);
-  const [role, setRole] = useState(getInitialRole);
-  const [isReady, setIsReady] = useState(typeof window !== 'undefined');
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState('Guest');
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') {

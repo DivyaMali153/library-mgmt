@@ -37,12 +37,22 @@ export async function POST(request) {
     status: 'Pending',
     createdAt: new Date().toISOString(),
     title: payload.title || payload.bookTitle || '',
-    studentName: payload.studentName || payload.studentName === '' ? payload.studentName : payload.requestedBy || '',
+    studentName: payload.studentName || (payload.studentName === '' ? payload.studentName : payload.requestedBy || ''),
     studentId: payload.studentId || '',
     requestedBy: payload.requestedBy || payload.email || '',
     note: payload.note || '',
     ...payload,
   });
+
+  if ((payload.requestType || '').toLowerCase() === 'return') {
+    await createNotificationForRole('Librarian', {
+      title: `Return request: ${record.title}`,
+      type: 'ReturnRequested',
+      data: { requestId: record.id, loanId: payload.loanId || payload.bookId || record.id },
+    });
+    return Response.json(record, { status: 201 });
+  }
+
   // notify librarians about new request
   await createNotificationForRole('Librarian', { title: `New book request: ${record.title}`, type: 'RequestCreated', data: { requestId: record.id } });
   return Response.json(record, { status: 201 });
@@ -51,9 +61,55 @@ export async function POST(request) {
 export async function PUT(request) {
   const payload = await request.json();
   const updated = await updateRecord('requests.json', payload.id, payload);
-  // notify student when status changes
+
+  if (payload.requestType !== 'return' && payload.status === 'Accepted') {
+    const loanRecords = await readJsonCollection('loans.json');
+    const sameStudentAndBook = loanRecords.find((loan) => {
+      const studentMatch = (loan.borrower || loan.studentEmail || loan.requestedBy || '').toLowerCase() === String(payload.requestedBy || '').toLowerCase();
+      const bookMatch = (loan.bookId || loan.title || '').toLowerCase() === String(payload.bookId || payload.title || '').toLowerCase();
+      return studentMatch && bookMatch && loan.status === 'Active';
+    });
+
+    if (!sameStudentAndBook) {
+      await createRecord('loans.json', {
+        bookId: payload.bookId || '',
+        title: payload.title || '',
+        borrower: payload.requestedBy || payload.email || '',
+        borrowerName: payload.studentName || '',
+        studentEmail: payload.requestedBy || payload.email || '',
+        studentName: payload.studentName || '',
+        issueDate: payload.issueDate || new Date().toISOString().slice(0, 10),
+        dueDate: payload.dueDate || new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+        status: 'Active',
+        createdAt: new Date().toISOString(),
+      });
+    }
+  }
+
+  if (payload.requestType === 'return' && payload.status === 'Accepted') {
+    const loanRecords = await readJsonCollection('loans.json');
+    const currentLoan = loanRecords.find((loan) => String(loan.id) === String(payload.loanId || payload.bookId || ''));
+    if (currentLoan) {
+      await updateRecord('loans.json', currentLoan.id, {
+        ...currentLoan,
+        status: 'Returned',
+        returnDate: payload.returnDate || new Date().toISOString().slice(0, 10),
+        returnedAt: payload.handledAt || new Date().toISOString(),
+      });
+    }
+  }
+
   if (payload.requestedBy) {
-    await createNotificationFor(payload.requestedBy, { title: `Your request "${payload.title}" is ${payload.status}`, type: 'RequestUpdated', data: { requestId: payload.id, status: payload.status }, librarianRemarks: payload.librarianRemarks || '' });
+    const notificationTitle = payload.requestType === 'return'
+      ? `Your return request for "${payload.title}" is ${payload.status}`
+      : `Your request "${payload.title}" is ${payload.status}`;
+
+    await createNotificationFor(payload.requestedBy, {
+      title: notificationTitle,
+      type: payload.requestType === 'return' ? 'ReturnUpdated' : 'RequestUpdated',
+      data: { requestId: payload.id, status: payload.status },
+      librarianRemarks: payload.librarianRemarks || '',
+    });
   }
   return Response.json(updated);
 }

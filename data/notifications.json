@@ -1,230 +1,51 @@
 [
   {
-    "id": "de3db09a-b5b4-48a7-a74f-13d3cd91a4a5",
-    "userEmail": "b",
-    "read": false,
-    "createdAt": "2026-08-07T10:56:19.441Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "6d04efd0-cc3e-4152-a0cc-f9b93f8ac41a"
-    }
-  },
-  {
-    "id": "4094282f-7655-476f-ab55-36e4bba39f24",
-    "userEmail": "b",
-    "read": false,
-    "createdAt": "2026-08-07T10:56:22.899Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "10eb4b52-8906-4cbe-a9ed-0b35e488f745"
-    }
-  },
-  {
-    "id": "1b6480a2-72ef-4999-9174-c6fe7eb49526",
-    "userEmail": "b",
-    "read": false,
-    "createdAt": "2026-08-07T10:56:27.932Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "3783d2e7-aba4-4258-a961-d7c4892e9ec5"
-    }
-  },
-  {
-    "id": "19d3a07f-8791-4b4c-8c35-7179ae76515c",
-    "userEmail": "a",
-    "read": false,
-    "createdAt": "2026-08-07T10:57:08.561Z",
-    "title": "Your request \"The Great Gatsby\" is Not Available",
-    "type": "RequestUpdated",
-    "data": {
-      "requestId": "6d04efd0-cc3e-4152-a0cc-f9b93f8ac41a",
-      "status": "Not Available"
-    },
-    "librarianRemarks": ""
-  },
-  {
-    "id": "cc227a36-4e96-4ed0-a183-dc140ee411f5",
-    "userEmail": "a",
-    "read": false,
-    "createdAt": "2026-08-07T10:57:43.210Z",
-    "title": "Your request \"The Great Gatsby\" is Accepted",
-    "type": "RequestUpdated",
-    "data": {
-      "requestId": "10eb4b52-8906-4cbe-a9ed-0b35e488f745",
-      "status": "Accepted"
-    },
-    "librarianRemarks": "you can collect"
-  },
-  {
-    "id": "7446338f-c7ce-46c8-bea5-40d0a2e4dd56",
-    "userEmail": "a",
-    "read": false,
-    "createdAt": "2026-08-07T10:58:09.905Z",
-    "title": "Your request \"The Great Gatsby\" is Rejected",
-    "type": "RequestUpdated",
-    "data": {
-      "requestId": "3783d2e7-aba4-4258-a961-d7c4892e9ec5",
-      "status": "Rejected"
-    },
-    "librarianRemarks": "fee pending"
-  },
-  {
-    "id": "bb725c6a-92b0-42ee-87bb-acc8b09c4ace",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:44.545Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "cbf7ba7c-11e0-4188-a461-78bc075b0a5b"
-    }
-  },
-  {
-    "id": "aad34452-78ee-4504-8059-8febbaa2607c",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:47.636Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "0743415a-d2de-43e7-a9b3-0a822f34c3d8"
-    }
-  },
-  {
-    "id": "fb40b86d-9b62-4112-8613-bc1357f72777",
+    "id": "3c027df2-ea7f-43c9-86a8-082938a84540",
     "userEmail": "librarian@pratap.com",
     "read": true,
-    "createdAt": "2026-08-14T11:38:53.635Z",
+    "createdAt": "2026-08-16T11:55:35.517Z",
     "title": "New book request: The Great Gatsby",
     "type": "RequestCreated",
     "data": {
-      "requestId": "be3056e3-f762-4e68-8cdc-d46c38a36c51"
+      "requestId": "8c9f4213-8e6d-4f62-bf58-d93e025e5921"
     }
   },
   {
-    "id": "0cbb0cea-fff8-4c98-8fb8-87b604950125",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:54.638Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "fb050f3f-2bdb-475e-9075-6f5900bc7c0f"
-    }
-  },
-  {
-    "id": "560fb804-34a5-4518-b618-c8279369a406",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:55.318Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "a9111c2a-5128-473e-9c46-723b03b1ddcb"
-    }
-  },
-  {
-    "id": "d7ddf0ce-bbed-493f-a073-559c5ed99b49",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:55.534Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "c059cb46-6703-4ffc-915f-f2b56fcebc95"
-    }
-  },
-  {
-    "id": "7143bc8f-b358-412c-81a1-69e1deafcb1f",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:58.604Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "7cbe5e11-d116-46d7-9615-22e2b69c4796"
-    }
-  },
-  {
-    "id": "963931ce-f4ef-42c5-85b8-8fc28ceca777",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:38:59.867Z",
-    "title": "New book request: Atomic Habits",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "5645c13f-b89f-406a-8cac-b8254d561494"
-    }
-  },
-  {
-    "id": "e4f02b64-c236-4cc5-b226-7801789d12c3",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:39:01.141Z",
-    "title": "New book request: Atomic Habits",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "2ba92b38-80f8-4fdb-af09-86858bd2d407"
-    }
-  },
-  {
-    "id": "ae7fe5e0-7370-4f66-95f7-83729df81364",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:39:02.818Z",
-    "title": "New book request: Data Structures",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "8d52e1eb-5f7a-4324-8f7b-9b3f2ff9bdc0"
-    }
-  },
-  {
-    "id": "41a4905f-c530-46e2-ad60-5b3dde956595",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T11:39:03.479Z",
-    "title": "New book request: Data Structures",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "4f4fce63-e61e-4d17-b2bb-1abbe3bd34b5"
-    }
-  },
-  {
-    "id": "cf916980-5290-4880-a928-3cc9d717ee6a",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T13:14:16.802Z",
-    "title": "New book request: The Great Gatsby",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "dfa9c345-342f-404b-a818-9affebcf751d"
-    }
-  },
-  {
-    "id": "6335712f-b628-43bd-b5c3-9102b4686fb5",
-    "userEmail": "librarian@pratap.com",
-    "read": false,
-    "createdAt": "2026-08-14T13:14:20.175Z",
-    "title": "New book request: Data Structures",
-    "type": "RequestCreated",
-    "data": {
-      "requestId": "b5bfe790-3a6f-4998-b4be-99aa77b830ea"
-    }
-  },
-  {
-    "id": "8a7ff96b-9cb3-434c-8da1-7a19d4f6dffc",
+    "id": "ad7dfa60-1a7b-425f-9608-04eae5b6a2be",
     "userEmail": "student@pratap.com",
     "read": false,
-    "createdAt": "2026-08-14T13:16:29.908Z",
+    "createdAt": "2026-08-16T11:56:10.439Z",
     "title": "Your request \"The Great Gatsby\" is Accepted",
     "type": "RequestUpdated",
     "data": {
-      "requestId": "cbf7ba7c-11e0-4188-a461-78bc075b0a5b",
+      "requestId": "8c9f4213-8e6d-4f62-bf58-d93e025e5921",
       "status": "Accepted"
     },
-    "librarianRemarks": ""
+    "librarianRemarks": "issued"
+  },
+  {
+    "id": "27b25550-c7a0-4fd5-9b47-fb8b59d934ef",
+    "userEmail": "librarian@pratap.com",
+    "read": false,
+    "createdAt": "2026-08-16T12:06:06.278Z",
+    "title": "Return request: Data Structures",
+    "type": "ReturnRequested",
+    "data": {
+      "requestId": "0210ed5b-e9c9-4c18-a400-2eac95142f81",
+      "loanId": "loan-demo-active-1"
+    }
+  },
+  {
+    "id": "71d54e07-abeb-4015-981f-8120d6472b9a",
+    "userEmail": "student@pratap.com",
+    "read": false,
+    "createdAt": "2026-08-16T12:06:22.415Z",
+    "title": "Your return request for \"Data Structures\" is Accepted",
+    "type": "ReturnUpdated",
+    "data": {
+      "requestId": "0210ed5b-e9c9-4c18-a400-2eac95142f81",
+      "status": "Accepted"
+    },
+    "librarianRemarks": "accepted"
   }
 ]

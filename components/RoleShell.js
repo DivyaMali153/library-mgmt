@@ -43,12 +43,16 @@ const navigation = [
 
 const studentNavigation = [
   { label: "E-books", href: "/ebooks", icon: AutoStoriesIcon },
+  { label: "Borrowed Books", href: "/borrowed-books", icon: AssignmentReturnIcon },
+  { label: "Requested Books", href: "/requested-books", icon: LibraryBooksIcon },
   { label: "Book History", href: "/book-history", icon: GroupIcon },
 ];
 
 const librarianNavigation = [
   { label: "E-books", href: "/ebooks", icon: AutoStoriesIcon },
   { label: "Book Requests", href: "/requests", icon: LibraryBooksIcon },
+  { label: "Borrowed Books", href: "/borrowed-books", icon: AssignmentReturnIcon },
+  { label: "Book History", href: "/book-history", icon: GroupIcon },
   { label: "Borrowers", href: "/borrowers", icon: PersonIcon },
   { label: "Reports", href: "/reports", icon: AssessmentIcon },
   { label: "Profile", href: "/profile", icon: PersonIcon },
