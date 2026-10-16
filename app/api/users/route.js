@@ -1,15 +1,10 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { updateRecord } from '../../../lib/jsonStore';
+import { createRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, publicUser, unauthorizedResponse } from '../../../lib/serverAuth';
-
-const filePath = path.join(process.cwd(), 'data', 'users.json');
 
 export async function GET(request) {
   const currentUser = await getSessionUser(request);
   if (!currentUser) return unauthorizedResponse();
-  const json = await fs.readFile(filePath, 'utf8');
-  const users = JSON.parse(json);
+  const users = await readJsonCollection('users.json');
   return Response.json(isStaff(currentUser) ? users.map(publicUser) : [publicUser(currentUser)]);
 }
 
@@ -18,11 +13,7 @@ export async function POST(request) {
   if (!currentUser) return unauthorizedResponse();
   if (!isStaff(currentUser)) return forbiddenResponse();
   const payload = await request.json();
-  const json = await fs.readFile(filePath, 'utf8');
-  const users = JSON.parse(json);
-  const user = { id: crypto.randomUUID(), ...payload };
-  users.push(user);
-  await fs.writeFile(filePath, JSON.stringify(users, null, 2));
+  const user = await createRecord('users.json', payload);
   return Response.json(publicUser(user), { status: 201 });
 }
 

@@ -1,7 +1,5 @@
-import { createRecord, deleteRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
+import { createRecord, deleteEbookFile, deleteRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 function duplicateBook(ebooks, payload, currentId) {
   const title = String(payload.title || '').trim().toLowerCase();
@@ -74,7 +72,7 @@ export async function DELETE(request) {
   if (!target) return Response.json({ error: 'E-book not found' }, { status: 404 });
   const deleted = await deleteRecord('ebooks.json', id);
   if (deleted && target.storageFilename) {
-    await fs.unlink(path.join(process.cwd(), 'data', 'ebooks', path.basename(target.storageFilename))).catch(() => {});
+    await deleteEbookFile(target.storageFilename);
   }
   return Response.json({ deleted });
 }

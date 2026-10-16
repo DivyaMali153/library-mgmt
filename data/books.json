@@ -24,19 +24,35 @@
     "status": "On Loan"
   },
   {
-    "id": null,
-    "title": "KIng",
-    "author": "Yogesh mahajan",
-    "subject": "Hindi",
+    "id": "book-4",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "subject": "Computer Science",
+    "availableCopies": 3,
+    "status": "Available"
+  },
+  {
+    "id": "book-5",
+    "title": "sdfs",
+    "author": "sds",
+    "subject": "sf",
     "availableCopies": 1,
     "status": "Available"
   },
   {
-    "id": null,
-    "title": "Music",
-    "author": "Rd burman",
-    "subject": "english",
-    "availableCopies": 4,
+    "id": "book-6",
+    "title": "dv",
+    "author": "sd",
+    "subject": "sd",
+    "availableCopies": 1,
+    "status": "Available"
+  },
+  {
+    "id": "book-7",
+    "title": "jh",
+    "author": "ks",
+    "subject": "sss",
+    "availableCopies": 1,
     "status": "Available"
   }
 ]

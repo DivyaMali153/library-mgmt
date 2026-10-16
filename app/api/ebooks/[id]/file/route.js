@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs';
 import path from 'path';
-import { readJsonCollection } from '../../../../../lib/jsonStore';
+import { readEbookFile, readJsonCollection } from '../../../../../lib/jsonStore';
 import { getSessionUser, isStaff, unauthorizedResponse } from '../../../../../lib/serverAuth';
 
 export async function GET(request, { params }) {
@@ -21,24 +20,17 @@ export async function GET(request, { params }) {
     if (!approved) return Response.json({ error: 'E-book access has not been approved' }, { status: 403 });
   }
 
-  let filePath;
-  if (ebook.storageFilename) {
-    filePath = path.join(process.cwd(), 'data', 'ebooks', path.basename(ebook.storageFilename));
-  } else if (ebook.pdfUrl) {
-    filePath = path.join(process.cwd(), 'public', 'ebooks', path.basename(new URL(ebook.pdfUrl, request.url).pathname));
-  }
-  if (!filePath) return Response.json({ error: 'PDF file is unavailable' }, { status: 404 });
+  const filename = ebook.storageFilename || (ebook.pdfUrl ? path.basename(new URL(ebook.pdfUrl, request.url).pathname) : null);
+  if (!filename) return Response.json({ error: 'PDF file is unavailable' }, { status: 404 });
 
-  try {
-    const content = await fs.readFile(filePath);
-    return new Response(content, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${String(ebook.title || 'ebook').replace(/["\\/]/g, '')}.pdf"`,
-        'Cache-Control': 'private, no-store',
-      },
-    });
-  } catch {
-    return Response.json({ error: 'PDF file is unavailable' }, { status: 404 });
-  }
+  const content = await readEbookFile(filename);
+  if (!content) return Response.json({ error: 'PDF file is unavailable' }, { status: 404 });
+
+  return new Response(content, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${String(ebook.title || 'ebook').replace(/["\\/]/g, '')}.pdf"`,
+      'Cache-Control': 'private, no-store',
+    },
+  });
 }

@@ -26,7 +26,7 @@
   {
     "id": "27b25550-c7a0-4fd5-9b47-fb8b59d934ef",
     "userEmail": "librarian@pratap.com",
-    "read": false,
+    "read": true,
     "createdAt": "2026-08-16T12:06:06.278Z",
     "title": "Return request: Data Structures",
     "type": "ReturnRequested",
@@ -51,7 +51,7 @@
   {
     "id": "970baf1d-792a-451f-ab29-56467f203fb2",
     "userEmail": "librarian@pratap.com",
-    "read": false,
+    "read": true,
     "createdAt": "2026-10-16T04:14:56.306Z",
     "title": "New book request: The Great Gatsby",
     "type": "RequestCreated",

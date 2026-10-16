@@ -1,17 +1,14 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { createRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
+import { createRecord, readJsonCollection, readJsonData, updateRecord, writeJsonData } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
 
-const settingsPath = path.join(process.cwd(), 'data', 'library-settings.json');
 const dayMs = 24 * 60 * 60 * 1000;
 
 async function readSettings() {
-  try {
-    return JSON.parse(await fs.readFile(settingsPath, 'utf8'));
-  } catch {
-    return { fineRatePerDay: 5, paymentDeadlineDays: 7 };
-  }
+  const settings = await readJsonData('library-settings.json');
+  return {
+    fineRatePerDay: Number(settings?.fineRatePerDay ?? 5),
+    paymentDeadlineDays: Number(settings?.paymentDeadlineDays ?? 7),
+  };
 }
 
 async function createNotification(email, eventKey, title, type, data) {
@@ -136,7 +133,7 @@ export async function POST(request) {
       return Response.json({ error: 'Fine rate or payment deadline is invalid' }, { status: 400 });
     }
     const settings = { fineRatePerDay, paymentDeadlineDays };
-    await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2));
+    await writeJsonData('library-settings.json', settings);
     return Response.json({ settings });
   }
   if (String(user.role).toLowerCase() !== 'student') return forbiddenResponse();
@@ -178,7 +175,7 @@ export async function PUT(request) {
       return Response.json({ error: 'Fine rate or payment deadline is invalid' }, { status: 400 });
     }
     const settings = { fineRatePerDay, paymentDeadlineDays };
-    await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2));
+    await writeJsonData('library-settings.json', settings);
     return Response.json({ settings });
   }
 

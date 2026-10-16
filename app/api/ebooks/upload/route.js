@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import { createRecord, readJsonCollection } from "../../../../lib/jsonStore";
+import { createRecord, readJsonCollection, saveEbookFile } from "../../../../lib/jsonStore";
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from "../../../../lib/serverAuth";
 
 export async function POST(request) {
@@ -36,15 +36,12 @@ export async function POST(request) {
       return Response.json({ error: "An e-book with this title and author already exists" }, { status: 409 });
     }
 
-    const outDir = path.join(process.cwd(), "data", "ebooks");
-    await fs.mkdir(outDir, { recursive: true });
     const buffer = Buffer.from(contentBase64, "base64");
     if (buffer.length === 0 || buffer.length > 25 * 1024 * 1024 || buffer.subarray(0, 5).toString() !== "%PDF-") {
       return Response.json({ error: "Upload must be a valid PDF no larger than 25MB" }, { status: 400 });
     }
     const storageFilename = `${randomUUID()}.pdf`;
-    const filePath = path.join(outDir, storageFilename);
-    await fs.writeFile(filePath, buffer);
+    await saveEbookFile(storageFilename, buffer);
 
     const id = randomUUID();
     const record = await createRecord("ebooks.json", {

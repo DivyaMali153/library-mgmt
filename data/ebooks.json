@@ -187,5 +187,20 @@
     "createdAt": "2026-10-16T17:04:24.901Z",
     "availability": "Available",
     "status": "Available"
+  },
+  {
+    "id": "7b652397-b902-451e-b1fb-b3d04779e64f",
+    "title": "sffv",
+    "author": "sd",
+    "coverImage": "",
+    "category": "sd",
+    "subject": "sd",
+    "description": "s",
+    "pdfUrl": "/api/ebooks/7b652397-b902-451e-b1fb-b3d04779e64f/file",
+    "storageFilename": "e1e29a7b-b118-483b-adae-9d11e0503db3.pdf",
+    "originalFilename": "Ganesh_Mali_Java_Full_Stack_Resume.pdf",
+    "createdAt": "2026-10-16T18:58:55.317Z",
+    "availability": "Available",
+    "status": "Available"
   }
 ]
