@@ -172,5 +172,20 @@
     "createdAt": "2026-10-16T14:19:55.336Z",
     "availability": "Available",
     "status": "Available"
+  },
+  {
+    "id": "159f8b05-d530-413a-ad73-2568246a1645",
+    "title": "typescriot",
+    "author": "lalit",
+    "coverImage": "",
+    "category": "coding",
+    "subject": "coding",
+    "description": "",
+    "pdfUrl": "/api/ebooks/159f8b05-d530-413a-ad73-2568246a1645/file",
+    "storageFilename": "e23f11c5-dc52-4dc3-8ca7-b4c15e1fa3cc.pdf",
+    "originalFilename": "TypeScript_for_Beginners.pdf",
+    "createdAt": "2026-10-16T17:04:24.901Z",
+    "availability": "Available",
+    "status": "Available"
   }
 ]

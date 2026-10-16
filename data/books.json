@@ -22,5 +22,21 @@
     "subject": "Computer Science",
     "availableCopies": 1,
     "status": "On Loan"
+  },
+  {
+    "id": null,
+    "title": "KIng",
+    "author": "Yogesh mahajan",
+    "subject": "Hindi",
+    "availableCopies": 1,
+    "status": "Available"
+  },
+  {
+    "id": null,
+    "title": "Music",
+    "author": "Rd burman",
+    "subject": "english",
+    "availableCopies": 4,
+    "status": "Available"
   }
 ]
