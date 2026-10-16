@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Student
+actor Admin
+actor Librarian
+
+rectangle "Library Management System" {
+  usecase "Student Login" as Login
+  usecase "View Book Catalogue" as Books
+  usecase "View E-Book Catalogue" as Ebooks
+  usecase "Request Book" as RequestBook
+  usecase "Track Book Request" as TrackRequest
+  usecase "View Book History" as History
+  usecase "View Fine Details" as FineDetails
+  usecase "Submit/Record Fine Payment" as FinePayment
+  usecase "View Notifications" as ViewNotifications
+  usecase "View Profile Details" as Profile
+  usecase "Manage E-Books" as ManageEbooks
+  usecase "Manage Book Requests" as ManageRequests
+  usecase "Manage Borrowers" as ManageBorrowers
+  usecase "Issue and Return Books" as Circulation
+  usecase "Manage Fine Collection" as ManageFines
+  usecase "Generate Reports" as Reports
+  usecase "Manage Notifications" as ManageNotifications
+}
+
+Student --> Login
+Student --> Books
+Student --> Ebooks
+Student --> RequestBook
+Student --> TrackRequest
+Student --> History
+Student --> FineDetails
+Student --> FinePayment
+Student --> ViewNotifications
+Student --> Profile
+
+Admin --> Login
+Admin --> ManageEbooks
+Admin --> ManageRequests
+Admin --> ManageBorrowers
+Admin --> Circulation
+Admin --> ManageFines
+Admin --> Reports
+Admin --> ManageNotifications
+
+Librarian --> Login
+Librarian --> ManageEbooks
+Librarian --> ManageRequests
+Librarian --> ManageBorrowers
+Librarian --> Circulation
+Librarian --> ManageFines
+Librarian --> Reports
+Librarian --> ManageNotifications
+
+RequestBook ..> Books : <<include>>
+FinePayment ..> FineDetails : <<extend>>
+ManageRequests ..> ManageNotifications : <<include>>
+Circulation ..> ManageFines : <<extend>>
+
+@enduml

@@ -29,26 +29,40 @@ export default function HomePage() {
   const [requests, setRequests] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [users, setUsers] = useState([]);
+  const [fines, setFines] = useState([]);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
-      const [booksRes, loansRes, requestsRes, usersRes, notificationsRes] = await Promise.all([
-        fetch('/api/books'),
+      const booksRes = await fetch('/api/books');
+      setBooks(booksRes.ok ? await booksRes.json() : []);
+      if (!user?.email) {
+        setLoans([]);
+        setRequests([]);
+        setUsers([]);
+        setNotifications([]);
+        setFines([]);
+        return;
+      }
+      const [loansRes, requestsRes, usersRes, notificationsRes, finesRes] = await Promise.all([
         fetch('/api/loans'),
         fetch('/api/requests'),
         fetch('/api/users'),
-        fetch(`/api/notifications?email=${encodeURIComponent(user?.email || '')}`),
+        fetch('/api/notifications'),
+        fetch('/api/fines'),
       ]);
-      setBooks(await booksRes.json());
-      setLoans(await loansRes.json());
-      setRequests(await requestsRes.json());
-      setUsers(await usersRes.json());
-      setNotifications(await notificationsRes.json());
+      setLoans(loansRes.ok ? await loansRes.json() : []);
+      setRequests(requestsRes.ok ? await requestsRes.json() : []);
+      setUsers(usersRes.ok ? await usersRes.json() : []);
+      setNotifications(notificationsRes.ok ? await notificationsRes.json() : []);
+      const finesData = finesRes.ok ? await finesRes.json() : { fines: [] };
+      setFines(finesData.fines || []);
     };
 
     loadData();
-  }, [user]);
+    const interval = window.setInterval(loadData, 15000);
+    return () => window.clearInterval(interval);
+  }, [user?.email]);
 
   const studentLoans = useMemo(() => loans.filter((loan) => loan.requestedBy === user?.email || loan.borrower === user?.email), [loans, user]);
   const studentRequests = useMemo(() => requests.filter((request) => request.requestedBy === user?.email), [requests, user]);
@@ -63,13 +77,7 @@ export default function HomePage() {
   const activeLoans = loans.filter((loan) => loan.status === 'Active').length;
   const pendingRequests = requests.filter((request) => request.status === 'Pending').length;
   const overdueBooks = loans.filter((loan) => loan.status === 'Active' && loan.dueDate && new Date(loan.dueDate) < new Date()).length;
-  const totalFine = loans.reduce((sum, loan) => {
-    if (loan.status === 'Active' && loan.dueDate) {
-      const overdueDays = Math.max(0, Math.floor((new Date() - new Date(loan.dueDate)) / 86400000));
-      return sum + overdueDays * 10;
-    }
-    return sum;
-  }, 0);
+  const totalFine = fines.filter((fine) => fine.paymentStatus !== 'Paid').reduce((sum, fine) => sum + Number(fine.amount || 0), 0);
 
   const searchResults = useMemo(() => {
     const q = query.toLowerCase();
@@ -133,6 +141,14 @@ export default function HomePage() {
               <CardContent>
                 <Typography variant="overline" color="text.secondary">Due Books</Typography>
                 <Typography variant="h4" fontWeight={700}>{dueBooks}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="overline" color="text.secondary">Outstanding Fines</Typography>
+                <Typography variant="h4" fontWeight={700}>₹{totalFine}</Typography>
               </CardContent>
             </Card>
           </Grid>

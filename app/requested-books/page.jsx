@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Chip, Stack, Typography, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Card, CardContent, Chip, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { useRole } from '../../components/RoleProvider';
+import PageHeader from '../../components/PageHeader';
 
 export default function RequestedBooksPage() {
   const { user } = useRole();
@@ -13,24 +14,24 @@ export default function RequestedBooksPage() {
       setRequests([]);
       return;
     }
-    const res = await fetch(`/api/requests?email=${encodeURIComponent(user.email)}`);
-    setRequests(await res.json());
+    const res = await fetch('/api/requests');
+    if (res.ok) setRequests(await res.json());
   };
 
-  useEffect(() => { load(); }, [user?.email]);
+  useEffect(() => {
+    if (!user?.email) return;
+    load();
+    const interval = window.setInterval(load, 15000);
+    return () => window.clearInterval(interval);
+  }, [user?.email]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" fontWeight={700}>Requested Books</Typography>
-          <Typography color="text.secondary">Your submitted book requests and their current status.</Typography>
-        </CardContent>
-      </Card>
+      <PageHeader eyebrow="MY ACTIVITY" title="Book requests" description="Track submitted physical-book, e-book, and return requests." />
 
       <Card>
-        <CardContent>
-          <Table>
+        <CardContent sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 760 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Book Title</TableCell>
@@ -52,6 +53,7 @@ export default function RequestedBooksPage() {
                   <TableCell>{r.librarianRemarks || '-'}</TableCell>
                 </TableRow>
               ))}
+              {requests.length === 0 ? <TableRow><TableCell colSpan={5} align="center" sx={{ py: 6 }}>You have not submitted any requests yet.</TableCell></TableRow> : null}
             </TableBody>
           </Table>
         </CardContent>

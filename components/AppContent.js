@@ -4,10 +4,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useRole } from './RoleProvider';
 import AuthScreen from './AuthScreen';
-import { RoleShell } from './RoleShell';
+import { RoleShell } from './RoleShell.jsx';
 
-const studentAllowedPaths = ['/', '/books', '/book-history', '/ebooks', '/login', '/requested-books', '/borrowed-books'];
-const librarianAllowedPaths = ['/', '/books', '/ebooks', '/requests', '/borrowers', '/reports', '/profile', '/book-history', '/requested-books', '/borrowed-books', '/login'];
+const studentAllowedPaths = ['/', '/books', '/book-history', '/ebooks', '/login', '/requested-books', '/borrowed-books', '/fines', '/profile'];
+const librarianAllowedPaths = ['/', '/books', '/ebooks', '/requests', '/borrowers', '/reports', '/profile', '/book-history', '/requested-books', '/borrowed-books', '/fines', '/login'];
 
 export default function AppContent({ children }) {
   const { user, isReady } = useRole();

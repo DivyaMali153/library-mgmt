@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Card, CardContent, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { useRole } from '../../components/RoleProvider';
+import PageHeader from '../../components/PageHeader';
 
 export default function BorrowedBooksPage() {
   const { user } = useRole();
@@ -16,9 +17,11 @@ export default function BorrowedBooksPage() {
         return;
       }
       const res = await fetch(`/api/loans?email=${encodeURIComponent(user.email)}`);
-      setLoans(await res.json());
+      if (res.ok) setLoans(await res.json());
     };
     load();
+    const interval = window.setInterval(load, 15000);
+    return () => window.clearInterval(interval);
   }, [user?.email]);
 
   const activeLoans = useMemo(() => loans.filter((loan) => loan.status === 'Active'), [loans]);
@@ -65,17 +68,12 @@ export default function BorrowedBooksPage() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" fontWeight={700}>Currently Borrowed Books</Typography>
-          <Typography color="text.secondary">View active loans, renew eligible books, and request a return.</Typography>
-          {message ? <Typography color="success.main" sx={{ mt: 1 }}>{message}</Typography> : null}
-        </CardContent>
-      </Card>
+      <PageHeader eyebrow="CIRCULATION" title="Borrowed books" description="Review active loans, due dates, and return requests." />
+      {message ? <Alert severity={message.startsWith('Unable') || message.startsWith('Please') ? 'warning' : 'success'}>{message}</Alert> : null}
 
       <Card>
-        <CardContent>
-          <Table>
+        <CardContent sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 720 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Book Title</TableCell>
@@ -102,6 +100,7 @@ export default function BorrowedBooksPage() {
                   </TableCell>
                 </TableRow>
               ))}
+              {activeLoans.length === 0 ? <TableRow><TableCell colSpan={5} align="center" sx={{ py: 6 }}>You have no active borrowed books.</TableCell></TableRow> : null}
             </TableBody>
           </Table>
         </CardContent>

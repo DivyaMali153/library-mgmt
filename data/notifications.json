@@ -47,5 +47,43 @@
       "status": "Accepted"
     },
     "librarianRemarks": "accepted"
+  },
+  {
+    "id": "970baf1d-792a-451f-ab29-56467f203fb2",
+    "userEmail": "librarian@pratap.com",
+    "read": false,
+    "createdAt": "2026-10-16T04:14:56.306Z",
+    "title": "New book request: The Great Gatsby",
+    "type": "RequestCreated",
+    "data": {
+      "requestId": "b19b5ac9-e5f1-4c33-99b0-ae1e1379e951"
+    }
+  },
+  {
+    "id": "55671072-4d61-44d1-b30f-779766bb569d",
+    "userEmail": "student@pratap.com",
+    "eventKey": "loan-issued:9b3c214a-33b1-4e10-a445-f81f2b290f8a",
+    "read": false,
+    "createdAt": "2026-10-16T14:36:22.175Z",
+    "title": "Book issued: The Great Gatsby. Due 2026-10-21",
+    "type": "BookIssued",
+    "data": {
+      "loanId": "9b3c214a-33b1-4e10-a445-f81f2b290f8a",
+      "dueDate": "2026-10-21"
+    }
+  },
+  {
+    "id": "df695d2b-74db-4900-84b7-cc4ce58aeb95",
+    "userEmail": "student@pratap.com",
+    "eventKey": "request-status:8c9f4213-8e6d-4f62-bf58-d93e025e5921:Issued",
+    "read": false,
+    "createdAt": "2026-10-16T14:36:22.175Z",
+    "title": "Your request \"The Great Gatsby\" is Issued",
+    "type": "RequestUpdated",
+    "data": {
+      "requestId": "8c9f4213-8e6d-4f62-bf58-d93e025e5921",
+      "status": "Issued"
+    },
+    "librarianRemarks": "issued"
   }
 ]

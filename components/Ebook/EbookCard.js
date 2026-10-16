@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
+import Link from "next/link";
 import {
   Button,
   Card,
@@ -20,10 +22,48 @@ export default function EbookCard({ ebook }) {
   if (!ebook) return null;
 
   const [open, setOpen] = useState(false);
+  const [request, setRequest] = useState(null);
+  const [message, setMessage] = useState("");
+  const { role, user } = useRole();
+  const isStudent = String(role || "").toLowerCase() === "student";
+  const isStaff = ["administrator", "librarian"].includes(String(role || "").toLowerCase());
+  const canRead = isStaff || (isStudent && ["Accepted", "Issued"].includes(request?.status));
 
-  const { role } = useRole();
+  useEffect(() => {
+    if (!isStudent) return;
+    let active = true;
+    const loadRequest = async () => {
+      const response = await fetch("/api/requests");
+      if (!response.ok) return;
+      const requests = await response.json();
+      if (active) setRequest(requests.find((item) => item.requestType === "ebook" && String(item.ebookId) === String(ebook.id)) || null);
+    };
+    loadRequest();
+    const interval = window.setInterval(loadRequest, 15000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [isStudent, ebook.id]);
 
-  const routeId = null;
+  const requestAccess = async () => {
+    if (!user?.email) {
+      setMessage("Sign in as a student to request access.");
+      return;
+    }
+    const response = await fetch("/api/requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ requestType: "ebook", ebookId: ebook.id, title: ebook.title, author: ebook.author, note: "Request access to e-book" }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setMessage(result.error || "Unable to submit the request.");
+      return;
+    }
+    setRequest(result);
+    setMessage("Access request submitted.");
+  };
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${ebook.title}"? This cannot be undone.`)) return;
@@ -95,20 +135,32 @@ export default function EbookCard({ ebook }) {
           size="small"
           variant="contained"
           fullWidth
+          disabled={!canRead}
         >
-          Read Book
+          {canRead ? "Read Book" : "Access after approval"}
         </Button>
-        {role === "Librarian" ? (
+        {isStaff ? (
           <IconButton onClick={handleDelete} color="error" aria-label="delete">
             <DeleteIcon />
           </IconButton>
         ) : null}
       </CardActions>
 
+      {isStudent ? (
+        <CardActions sx={{ px: 2, pt: 0, flexWrap: "wrap" }}>
+          {!request || ["Rejected", "Not Available"].includes(request.status) ? <Button size="small" onClick={requestAccess}>Request access</Button> : <Chip size="small" label={request.status === "Accepted" || request.status === "Issued" ? "Access approved" : request.status} />}
+          {message ? <Typography variant="caption" color="text.secondary">{message}</Typography> : null}
+        </CardActions>
+      ) : null}
+
+      <CardActions sx={{ px: 2, pt: 0 }}>
+        <Button component={Link} href={`/ebooks/${ebook.id}`} size="small" fullWidth>Details</Button>
+      </CardActions>
+
       <PdfModal
         open={open}
         onClose={() => setOpen(false)}
-        pdfUrl={ebook.pdfUrl}
+        pdfUrl={`/api/ebooks/${ebook.id}/file`}
         title={ebook.title}
         author={ebook.author}
       />

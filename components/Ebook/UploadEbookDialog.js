@@ -15,8 +15,7 @@ export default function UploadEbookDialog({ open, onClose, onUploaded }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
-  const [subject, setSubject] = useState("");
-  const [format, setFormat] = useState("PDF");
+  const [category, setCategory] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -29,45 +28,44 @@ export default function UploadEbookDialog({ open, onClose, onUploaded }) {
     const newErrors = {};
     if (!title || !title.trim()) newErrors.title = "Title is required";
     if (!author || !author.trim()) newErrors.author = "Author is required";
-    if (!subject || !subject.trim()) newErrors.subject = "Subject is required";
-    if (!format || !format.trim()) newErrors.format = "Format is required";
-    if (format.toLowerCase() === "pdf" && !file)
-      newErrors.file = "PDF is required for PDF format";
+    if (!category || !category.trim()) newErrors.category = "Category is required";
+    if (!file) newErrors.file = "PDF is required";
+    if (file && file.type && file.type !== "application/pdf") newErrors.file = "Choose a PDF file";
     if (file && file.size > 25 * 1024 * 1024)
       newErrors.file = "File too large (max 25MB)";
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
 
     setLoading(true);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = reader.result.split(",")[1];
-      const payload = {
-        filename: `${Date.now()}-${file.name}`,
-        contentBase64: base64,
-        title,
-        author,
-        description,
-        subject,
-        format,
-      };
-
-      const res = await fetch("/api/ebooks/upload", {
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1]);
+        reader.onerror = () => reject(new Error("Unable to read the selected file"));
+        reader.readAsDataURL(file);
+      });
+      const response = await fetch("/api/ebooks/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ filename: file.name, contentBase64: base64, title, author, description, category }),
       });
-      if (res.ok) {
-        const record = await res.json();
-        onUploaded && onUploaded(record);
-        onClose();
-      } else {
-        console.error("Upload failed");
-        setErrors({ submit: "Upload failed" });
+      const result = await response.json();
+      if (!response.ok) {
+        setErrors({ submit: result.error || "Upload failed" });
+        return;
       }
+      onUploaded && onUploaded(result);
+      setTitle("");
+      setAuthor("");
+      setDescription("");
+      setCategory("");
+      setFile(null);
+      onClose();
+    } catch {
+      setErrors({ submit: "Unable to read or upload this PDF." });
+    } finally {
       setLoading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -92,23 +90,16 @@ export default function UploadEbookDialog({ open, onClose, onUploaded }) {
             helperText={errors.author}
           />
           <TextField
-            label="Subject"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            label="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
             required
-            error={!!errors.subject}
-            helperText={errors.subject}
-          />
-          <TextField
-            label="Format"
-            value={format}
-            onChange={(e) => setFormat(e.target.value)}
-            required
-            error={!!errors.format}
-            helperText={errors.format || "Typical value: PDF"}
+            error={!!errors.category}
+            helperText={errors.category}
           />
           <div>
             <input type="file" accept="application/pdf" onChange={handleFile} />
+            {file ? <div>{file.name}</div> : null}
             {errors.file ? (
               <div style={{ color: "red", fontSize: 12 }}>{errors.file}</div>
             ) : null}
@@ -132,7 +123,7 @@ export default function UploadEbookDialog({ open, onClose, onUploaded }) {
         <Button
           onClick={submit}
           variant="contained"
-          disabled={loading || !title || !file}
+          disabled={loading || !title || !author || !category || !file}
         >
           {loading ? "Uploading..." : "Upload"}
         </Button>

@@ -23,7 +23,7 @@ export default function EbookList({ showHeader = true }) {
         const res = await fetch("/api/ebooks");
         const data = await res.json();
         if (!active) return;
-        setEbooks(data || []);
+        setEbooks((data || []).filter((ebook) => (ebook.availability || ebook.status) === "Available"));
       } catch (e) {
         console.error(e);
       }

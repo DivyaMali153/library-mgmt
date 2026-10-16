@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Box, Button, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
 import PdfReader from './PdfReader';
 
-export default function EbookDetails({ ebook }) {
+export default function EbookDetails({ ebook, canRead = false }) {
   if (!ebook) {
     return (
       <Card>
@@ -55,7 +55,7 @@ export default function EbookDetails({ ebook }) {
                 {ebook.description}
               </Typography>
               <Box sx={{ mt: 2 }}>
-                <Typography variant="body2"><strong>PDF:</strong> {ebook.pdfUrl}</Typography>
+                <Typography variant="body2"><strong>PDF:</strong> Protected library PDF</Typography>
                 <Typography variant="body2"><strong>Status:</strong> {ebook.status || ebook.availability}</Typography>
               </Box>
             </Box>
@@ -63,7 +63,7 @@ export default function EbookDetails({ ebook }) {
         </CardContent>
       </Card>
 
-      <PdfReader pdfUrl={ebook.pdfUrl} title={ebook.title} author={ebook.author} />
+      {canRead ? <PdfReader pdfUrl={`/api/ebooks/${ebook.id}/file`} title={ebook.title} author={ebook.author} /> : <Alert severity="info">Request access from the e-book catalogue and wait for librarian approval to read this PDF.</Alert>}
     </Box>
   );
 }

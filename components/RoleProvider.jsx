@@ -29,19 +29,31 @@ export function RoleProvider({ children }) {
       return;
     }
 
-    const syncUser = () => {
-      const storedUser = getStoredUser(window.localStorage) || getStoredUser(window.sessionStorage);
-      if (storedUser) {
-        setUser(storedUser);
-        setRole(storedUser.role || 'Guest');
-      } else {
-        setUser(null);
-        setRole('Guest');
+    let active = true;
+    const syncUser = async () => {
+      try {
+        const response = await fetch('/api/auth', { cache: 'no-store' });
+        const result = response.ok ? await response.json() : null;
+        if (!active) return;
+        if (result?.user) {
+          setUser(result.user);
+          setRole(result.user.role || 'Guest');
+        } else {
+          clearStoredUser();
+          setUser(null);
+          setRole('Guest');
+        }
+      } catch {
+        if (active) {
+          setUser(null);
+          setRole('Guest');
+        }
+      } finally {
+        if (active) setIsReady(true);
       }
     };
 
     syncUser();
-    setIsReady(true);
 
     const handleStorage = (event) => {
       if (event.key !== 'libraryUser') return;
@@ -49,7 +61,10 @@ export function RoleProvider({ children }) {
     };
 
     window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    return () => {
+      active = false;
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const login = (nextUser) => {

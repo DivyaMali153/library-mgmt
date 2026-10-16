@@ -25,5 +25,20 @@
     "dueDate": "2026-08-15",
     "returnDate": "2026-08-12",
     "status": "Returned"
+  },
+  {
+    "id": "9b3c214a-33b1-4e10-a445-f81f2b290f8a",
+    "bookId": "book-1",
+    "title": "The Great Gatsby",
+    "borrower": "student@pratap.com",
+    "borrowerName": "Riya Patil",
+    "studentEmail": "student@pratap.com",
+    "studentName": "Riya Patil",
+    "issueDate": "2026-10-16",
+    "issuedAt": "2026-10-16T14:36:22.168Z",
+    "dueDate": "2026-10-21",
+    "dueAt": "2026-10-21T23:59:59.999Z",
+    "status": "Active",
+    "createdAt": "2026-10-16T14:36:22.168Z"
   }
 ]

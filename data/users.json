@@ -8,10 +8,11 @@
   },
   {
     "id": "user-2",
-    "name": "Asha Deshmukh",
+    "name": "Asha Mali",
     "role": "Librarian",
     "email": "librarian@pratap.com",
-    "password": "librarian123"
+    "password": "librarian123",
+    "phone": ""
   },
   {
     "id": "user-3",

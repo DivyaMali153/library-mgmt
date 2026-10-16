@@ -1,7 +1,7 @@
 [
   {
     "id": "8c9f4213-8e6d-4f62-bf58-d93e025e5921",
-    "status": "Accepted",
+    "status": "Issued",
     "createdAt": "2026-08-16T11:55:35.514Z",
     "title": "The Great Gatsby",
     "studentName": "Riya Patil",
@@ -12,7 +12,10 @@
     "author": "F. Scott Fitzgerald",
     "bookId": "book-1",
     "librarianRemarks": "issued",
-    "handledAt": "2026-08-16T11:56:10.419Z"
+    "handledAt": "2026-10-16T14:36:22.168Z",
+    "loanId": "9b3c214a-33b1-4e10-a445-f81f2b290f8a",
+    "issueDate": "2026-10-16",
+    "dueDate": "2026-10-21"
   },
   {
     "id": "0210ed5b-e9c9-4c18-a400-2eac95142f81",
@@ -29,5 +32,18 @@
     "librarianRemarks": "accepted",
     "handledAt": "2026-08-16T12:06:22.411Z",
     "returnDate": "2026-08-16"
+  },
+  {
+    "id": "b19b5ac9-e5f1-4c33-99b0-ae1e1379e951",
+    "status": "Pending",
+    "createdAt": "2026-10-16T04:14:56.303Z",
+    "title": "The Great Gatsby",
+    "studentName": "Riya Patil",
+    "studentId": "user-4",
+    "requestedBy": "student@pratap.com",
+    "note": "Request from catalog",
+    "requestType": "physical",
+    "author": "F. Scott Fitzgerald",
+    "bookId": "book-1"
   }
 ]
