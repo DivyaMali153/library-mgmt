@@ -1,4 +1,4 @@
-import { createSession, getSessionUser, publicUser, revokeSession, sessionCookie } from '../../../lib/serverAuth';
+import { AuthConfigurationError, createSession, getSessionUser, publicUser, sessionCookie } from '../../../lib/serverAuth';
 import { readJsonCollection } from '../../../lib/jsonStore';
 
 export async function GET(request) {
@@ -21,11 +21,18 @@ export async function POST(request) {
   const user = users.find((item) => String(item.email || '').toLowerCase() === email && item.password === password);
   if (!user) return Response.json({ error: 'Invalid email or password' }, { status: 401 });
 
-  const token = await createSession(user);
+  let token;
+  try {
+    token = await createSession(user);
+  } catch (error) {
+    if (error instanceof AuthConfigurationError) {
+      return Response.json({ error: 'Authentication is not configured on the server' }, { status: 500 });
+    }
+    throw error;
+  }
   return Response.json({ user: publicUser(user) }, { headers: { 'Set-Cookie': sessionCookie(token) } });
 }
 
 export async function DELETE(request) {
-  await revokeSession(request);
   return Response.json({ success: true }, { headers: { 'Set-Cookie': sessionCookie('', 0) } });
 }
