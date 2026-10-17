@@ -6,8 +6,32 @@ import { useRole } from './RoleProvider';
 import AuthScreen from './AuthScreen';
 import { RoleShell } from './RoleShell';
 
-const studentAllowedPaths = ['/', '/books', '/book-history', '/ebooks', '/login', '/requested-books', '/borrowed-books'];
-const librarianAllowedPaths = ['/', '/books', '/ebooks', '/requests', '/borrowers', '/reports', '/profile', '/book-history', '/requested-books', '/borrowed-books', '/login'];
+const studentAllowedPaths = [
+  '/',
+  '/books',
+  '/book-history',
+  '/ebooks',
+  '/login',
+  '/requested-books',
+  '/borrowed-books',
+  '/fines',
+  '/profile',
+];
+
+const librarianAllowedPaths = [
+  '/',
+  '/books',
+  '/ebooks',
+  '/requests',
+  '/borrowers',
+  '/reports',
+  '/profile',
+  '/book-history',
+  '/requested-books',
+  '/borrowed-books',
+  '/fines',
+  '/login',
+];
 
 export default function AppContent({ children }) {
   const { user, isReady } = useRole();
@@ -35,12 +59,26 @@ export default function AppContent({ children }) {
     return null;
   }
 
-  if (user.role === 'Student' && !studentAllowedPaths.some((path) => pathname === path || pathname.startsWith(path + '/'))) {
-    return <RoleShell><div style={{ padding: 24 }}>Access denied: This page is not available for student users.</div></RoleShell>;
+  const userRole = String(user.role || '').toLowerCase();
+
+  if (userRole === 'student' && !studentAllowedPaths.some((path) => pathname === path || pathname.startsWith(path + '/'))) {
+    return (
+      <RoleShell>
+        <div style={{ padding: 24 }}>
+          Access denied: This page is not available for student users.
+        </div>
+      </RoleShell>
+    );
   }
 
-  if (user.role === 'Librarian' && !librarianAllowedPaths.some((path) => pathname === path || pathname.startsWith(path + '/'))) {
-    return <RoleShell><div style={{ padding: 24 }}>Access denied: This page is not available for librarian users.</div></RoleShell>;
+  if (userRole === 'librarian' && !librarianAllowedPaths.some((path) => pathname === path || pathname.startsWith(path + '/'))) {
+    return (
+      <RoleShell>
+        <div style={{ padding: 24 }}>
+          Access denied: This page is not available for librarian users.
+        </div>
+      </RoleShell>
+    );
   }
 
   return <RoleShell>{children}</RoleShell>;

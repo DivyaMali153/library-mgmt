@@ -1,5 +1,6 @@
 import { createRecord, readJsonCollection, updateRecord, writeJsonCollection } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
+import { syncOverdueFines } from '../../../lib/fineUtils';
 
 export async function GET(request) {
   const user = await getSessionUser(request);
@@ -114,6 +115,11 @@ export async function PUT(request) {
         type: 'BookReturned',
         data: { loanId: current.id },
       });
+    }
+    try {
+      await syncOverdueFines();
+    } catch (err) {
+      console.error('Error syncing overdue fines on return:', err);
     }
   }
   return Response.json(updated);

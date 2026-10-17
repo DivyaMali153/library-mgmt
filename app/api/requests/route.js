@@ -1,5 +1,6 @@
 import { createRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
+import { syncOverdueFines } from '../../../lib/fineUtils';
 
 async function createNotificationFor(email, eventKey, payload) {
   const notifications = await readJsonCollection('notifications.json');
@@ -247,6 +248,11 @@ export async function PUT(request) {
         const availableCopies = Number(book.availableCopies || 0) + 1;
         await updateRecord('books.json', book.id, { availableCopies, status: 'Available' });
       }
+    }
+    try {
+      await syncOverdueFines();
+    } catch (err) {
+      console.error('Error syncing overdue fines in requests route:', err);
     }
   }
 

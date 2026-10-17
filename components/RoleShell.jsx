@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   CssBaseline,
   Divider,
   Drawer,
@@ -34,6 +35,7 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import GroupIcon from "@mui/icons-material/Group";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRole } from "./RoleProvider";
@@ -52,7 +54,7 @@ const studentNavigation = [
   { label: "Borrowed Books", href: "/borrowed-books", icon: AssignmentReturnIcon },
   { label: "Requested Books", href: "/requested-books", icon: LibraryBooksIcon },
   { label: "Book History", href: "/book-history", icon: GroupIcon },
-  { label: "Fine Collection", href: "/fines", icon: AssignmentReturnIcon },
+  { label: "Fine Collection", href: "/fines", icon: ReceiptLongIcon },
   { label: "Profile", href: "/profile", icon: PersonIcon },
 ];
 
@@ -63,7 +65,7 @@ const librarianNavigation = [
   { label: "Book History", href: "/book-history", icon: GroupIcon },
   { label: "Borrowers", href: "/borrowers", icon: PersonIcon },
   { label: "Reports", href: "/reports", icon: AssessmentIcon },
-  { label: "Fine Collection", href: "/fines", icon: AssignmentReturnIcon },
+  { label: "Fine Collection", href: "/fines", icon: ReceiptLongIcon },
   { label: "Profile", href: "/profile", icon: PersonIcon },
 ];
 
@@ -125,6 +127,21 @@ export function RoleShell({ children }) {
     setNotifications((prev) =>
       prev.map((p) => (p.id === n.id ? { ...p, read: true } : p)),
     );
+  };
+
+  const markAllRead = async () => {
+    const unread = notifications.filter((n) => !n.read);
+    if (unread.length === 0) return;
+    await Promise.all(
+      unread.map((n) =>
+        fetch("/api/notifications", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...n, read: true }),
+        })
+      )
+    );
+    setNotifications((prev) => prev.map((p) => ({ ...p, read: true })));
   };
 
   return (
@@ -298,51 +315,121 @@ export function RoleShell({ children }) {
             <Typography variant="subtitle1" fontWeight={700}>Notifications</Typography>
             <Typography variant="caption" color="text.secondary">{unreadCount} unread</Typography>
           </Box>
-          <IconButton aria-label="Close notifications" onClick={() => setNotifOpen(false)} size="small">×</IconButton>
+          <Stack direction="row" spacing={1} alignItems="center">
+            {unreadCount > 0 ? (
+              <Button size="small" onClick={markAllRead} sx={{ fontSize: 12 }}>
+                Mark all read
+              </Button>
+            ) : null}
+            <IconButton aria-label="Close notifications" onClick={() => setNotifOpen(false)} size="small">×</IconButton>
+          </Stack>
         </Toolbar>
         <Box sx={{ p: 2, overflowY: "auto" }}>
-          <Stack spacing={1}>
+          <Stack spacing={1.25}>
             {notifications.length === 0 ? (
               <Box sx={{ py: 5, textAlign: "center" }}>
                 <NotificationsIcon sx={{ color: "#93a79d", fontSize: 28, mb: 1 }} />
                 <Typography color="text.secondary">You’re all caught up.</Typography>
               </Box>
             ) : null}
-            {notifications.map((n) => (
-              <Card
-                key={n.id}
-                variant="outlined"
-                sx={{
-                  p: 0.5,
-                  borderRadius: 2,
-                  borderColor: n.read ? "#e5ece8" : "#c8e3d2",
-                  bgcolor: n.read ? "#fff" : "#f4faf6",
-                }}
-              >
-                <CardContent sx={{ p: 1 }}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Box sx={{ pr: 1, flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={n.read ? 500 : 700}>{n.title}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(n.createdAt).toLocaleString()}
+            {notifications.map((n) => {
+              const isFine = n.type?.startsWith("Fine") || n.type === "OverdueReminder" || Boolean(n.data?.fineId);
+              let chipColor = "default";
+              let chipLabel = "";
+              if (n.type === "FineCreated") {
+                chipColor = "warning";
+                chipLabel = "Fine Assessed";
+              } else if (n.type === "FineOverdue" || n.type === "OverdueReminder") {
+                chipColor = "error";
+                chipLabel = n.type === "FineOverdue" ? "Fine Overdue" : "Overdue Reminder";
+              } else if (n.type === "FinePaid") {
+                chipColor = "success";
+                chipLabel = "Fine Paid";
+              } else if (n.type === "FineWaived") {
+                chipColor = "info";
+                chipLabel = "Fine Waived";
+              } else if (n.type === "FinePaymentSubmitted" || n.type === "FinePaymentPendingVerification") {
+                chipColor = "primary";
+                chipLabel = "Payment";
+              } else if (n.type === "BookIssued") {
+                chipColor = "primary";
+                chipLabel = "Issued";
+              } else if (n.type === "BookReturned") {
+                chipColor = "success";
+                chipLabel = "Returned";
+              } else if (n.type === "RequestUpdated" || n.type === "ReturnUpdated") {
+                chipColor = "info";
+                chipLabel = "Request";
+              }
+
+              return (
+                <Card
+                  key={n.id}
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 2,
+                    borderColor: n.read ? "#e5ece8" : isFine ? "#ffb74d" : "#a3d9b8",
+                    bgcolor: n.read ? "#fff" : isFine ? "#fffbf2" : "#f4faf6",
+                  }}
+                >
+                  <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
+                    <Stack spacing={0.75}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        {chipLabel ? (
+                          <Chip
+                            label={chipLabel}
+                            size="small"
+                            color={chipColor}
+                            sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
+                          />
+                        ) : <Box />}
+                        <Typography variant="caption" color="text.secondary">
+                          {new Date(n.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </Typography>
+                      </Stack>
+                      <Typography variant="subtitle2" fontWeight={n.read ? 500 : 700} sx={{ lineHeight: 1.4 }}>
+                        {n.title}
                       </Typography>
                       {n.librarianRemarks ? (
-                        <Typography variant="body2">
+                        <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                           Remarks: {n.librarianRemarks}
                         </Typography>
                       ) : null}
-                    </Box>
-                    <Stack>
-                      {!n.read ? <Button size="small" onClick={() => markRead(n)} sx={{ whiteSpace: "nowrap" }}>Mark read</Button> : null}
+                      <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ pt: 0.5 }}>
+                        {isFine ? (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => {
+                              markRead(n);
+                              setNotifOpen(false);
+                              router.push("/fines");
+                            }}
+                            sx={{ fontSize: 11, py: 0.25, px: 1, minHeight: 26 }}
+                          >
+                            View Fine
+                          </Button>
+                        ) : null}
+                        {!n.read ? (
+                          <Button
+                            size="small"
+                            onClick={() => markRead(n)}
+                            sx={{ fontSize: 11, py: 0.25, px: 1, minHeight: 26, whiteSpace: "nowrap" }}
+                          >
+                            Mark read
+                          </Button>
+                        ) : null}
+                      </Stack>
                     </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </Stack>
         </Box>
       </Drawer>
