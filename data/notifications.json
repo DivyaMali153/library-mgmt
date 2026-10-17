@@ -85,5 +85,19 @@
       "status": "Issued"
     },
     "librarianRemarks": "issued"
+  },
+  {
+    "userEmail": "student@pratap.com",
+    "eventKey": "fine-assessed:7c7abcac-d63c-4a54-960d-e68d95a343df",
+    "read": false,
+    "createdAt": "2026-10-17T04:18:31.927Z",
+    "title": "Fine assessed: \"The Great Gatsby\" (₹10). Reason: Damaged Book. Due date: 24 Oct 2026. Please clear your fine.",
+    "type": "FineCreated",
+    "data": {
+      "fineId": "7c7abcac-d63c-4a54-960d-e68d95a343df",
+      "amount": 10,
+      "deadline": "2026-10-24T04:18:31.867Z"
+    },
+    "id": "ca55aa9e-df22-4f90-a720-06a5622ff798"
   }
 ]

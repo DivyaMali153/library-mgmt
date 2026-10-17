@@ -1,4 +1,4 @@
-import { createRecord, readJsonCollection, updateRecord, writeJsonCollection } from '../../../lib/jsonStore';
+import { createRecord, deleteRecord, readJsonCollection, updateRecord, writeJsonCollection } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
 import { syncOverdueFines } from '../../../lib/fineUtils';
 
@@ -22,37 +22,48 @@ export async function POST(request) {
   const title = String(payload.title || '').trim();
   if (!title || !borrowerEmail) return Response.json({ error: 'Book title and student email are required' }, { status: 400 });
 
+  const status = payload.status === 'Returned' ? 'Returned' : 'Active';
   const loans = await readJsonCollection('loans.json');
-  const activeDuplicate = loans.find((loan) => {
-    const loanEmail = String(loan.studentEmail || loan.borrower || loan.requestedBy || '').toLowerCase();
-    return loan.status === 'Active' && loanEmail === borrowerEmail && String(loan.bookId || loan.title) === String(payload.bookId || title);
-  });
-  if (activeDuplicate) return Response.json({ error: 'This student already has an active loan for this book' }, { status: 409 });
+
+  if (status === 'Active') {
+    const activeDuplicate = loans.find((loan) => {
+      const loanEmail = String(loan.studentEmail || loan.borrower || loan.requestedBy || '').toLowerCase();
+      return loan.status === 'Active' && loanEmail === borrowerEmail && String(loan.bookId || loan.title) === String(payload.bookId || title);
+    });
+    if (activeDuplicate) return Response.json({ error: 'This student already has an active issue record for this book' }, { status: 409 });
+  }
 
   const books = await readJsonCollection('books.json');
   const book = books.find((item) => String(item.id) === String(payload.bookId));
-  if (payload.bookId && (!book || Number(book.availableCopies) < 1)) {
+  if (status === 'Active' && payload.bookId && (!book || Number(book.availableCopies) < 1)) {
     return Response.json({ error: 'Book is not currently available' }, { status: 409 });
   }
 
-  const issueDate = payload.issueDate || new Date().toISOString().slice(0, 10);
-  const dueDate = payload.dueDate || new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+  const now = new Date();
+  const issueDate = payload.issueDate || now.toISOString().slice(0, 10);
+  const dueDate = payload.dueDate || new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10);
+  const returnDate = status === 'Returned' ? (payload.returnDate || issueDate) : null;
+  const returnedAt = status === 'Returned' ? now.toISOString() : null;
+
   const loan = await createRecord('loans.json', {
     bookId: payload.bookId || '',
     title,
     borrower: borrowerEmail,
-    borrowerName: payload.borrowerName || payload.studentName || '',
+    borrowerName: payload.borrowerName || payload.studentName || borrowerEmail.split('@')[0],
     studentEmail: borrowerEmail,
-    studentName: payload.studentName || payload.borrowerName || '',
+    studentName: payload.studentName || payload.borrowerName || borrowerEmail.split('@')[0],
     issueDate,
-    issuedAt: new Date().toISOString(),
+    issuedAt: now.toISOString(),
     dueDate,
     dueAt: `${dueDate}T23:59:59.999Z`,
-    status: 'Active',
-    createdAt: new Date().toISOString(),
+    status,
+    returnDate,
+    returnedAt,
+    remarks: String(payload.remarks || '').trim(),
+    createdAt: now.toISOString(),
   });
 
-  if (book) {
+  if (status === 'Active' && book) {
     const availableCopies = Number(book.availableCopies) - 1;
     await updateRecord('books.json', book.id, {
       availableCopies,
@@ -61,17 +72,24 @@ export async function POST(request) {
   }
 
   const notifications = await readJsonCollection('notifications.json');
-  if (!notifications.some((item) => item.eventKey === `loan-issued:${loan.id}`)) {
+  if (status === 'Active' && !notifications.some((item) => item.eventKey === `loan-issued:${loan.id}`)) {
     await createRecord('notifications.json', {
       userEmail: borrowerEmail,
       eventKey: `loan-issued:${loan.id}`,
       read: false,
-      createdAt: new Date().toISOString(),
+      createdAt: now.toISOString(),
       title: `Book issued: ${loan.title}. Due ${loan.dueDate}`,
       type: 'BookIssued',
       data: { loanId: loan.id, dueDate: loan.dueDate },
     });
   }
+
+  if (status === 'Returned') {
+    try {
+      await syncOverdueFines();
+    } catch {}
+  }
+
   return Response.json(loan, { status: 201 });
 }
 
@@ -90,18 +108,40 @@ export async function PUT(request) {
     ? { ...payload }
     : { dueDate: payload.dueDate, dueAt: payload.dueDate ? `${payload.dueDate}T23:59:59.999Z` : current.dueAt };
   delete updates.id;
-  if (isStaff(user) && payload.status === 'Returned' && current.status !== 'Returned') {
-    updates.returnDate = payload.returnDate || new Date().toISOString().slice(0, 10);
-    updates.returnedAt = payload.returnedAt || new Date().toISOString();
-    if (current.bookId) {
-      const books = await readJsonCollection('books.json');
-      const book = books.find((item) => String(item.id) === String(current.bookId));
-      if (book) {
-        const availableCopies = Number(book.availableCopies || 0) + 1;
-        await updateRecord('books.json', book.id, { availableCopies, status: 'Available' });
+
+  if (isStaff(user)) {
+    if (payload.studentEmail) updates.borrower = payload.studentEmail.toLowerCase();
+    if (payload.studentName) updates.borrowerName = payload.studentName;
+
+    // Transition from Active to Returned
+    if (payload.status === 'Returned' && current.status !== 'Returned') {
+      updates.returnDate = payload.returnDate || new Date().toISOString().slice(0, 10);
+      updates.returnedAt = payload.returnedAt || new Date().toISOString();
+      if (current.bookId) {
+        const books = await readJsonCollection('books.json');
+        const book = books.find((item) => String(item.id) === String(current.bookId));
+        if (book) {
+          const availableCopies = Number(book.availableCopies || 0) + 1;
+          await updateRecord('books.json', book.id, { availableCopies, status: 'Available' });
+        }
+      }
+    }
+
+    // Transition from Returned to Active
+    if (payload.status === 'Active' && current.status === 'Returned') {
+      updates.returnDate = null;
+      updates.returnedAt = null;
+      if (current.bookId) {
+        const books = await readJsonCollection('books.json');
+        const book = books.find((item) => String(item.id) === String(current.bookId));
+        if (book && Number(book.availableCopies) > 0) {
+          const availableCopies = Number(book.availableCopies) - 1;
+          await updateRecord('books.json', book.id, { availableCopies, status: availableCopies > 0 ? 'Available' : 'Not Available' });
+        }
       }
     }
   }
+
   const updated = await updateRecord('loans.json', current.id, updates);
   if (current.status !== 'Returned' && updated.status === 'Returned') {
     const notifications = await readJsonCollection('notifications.json');
@@ -123,4 +163,31 @@ export async function PUT(request) {
     }
   }
   return Response.json(updated);
+}
+
+export async function DELETE(request) {
+  const user = await getSessionUser(request);
+  if (!user) return unauthorizedResponse();
+  if (!isStaff(user)) return forbiddenResponse();
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  if (!id) return Response.json({ error: 'Loan ID is required' }, { status: 400 });
+
+  const loans = await readJsonCollection('loans.json');
+  const current = loans.find((item) => String(item.id) === String(id));
+  if (!current) return Response.json({ error: 'Loan not found' }, { status: 404 });
+
+  // If active loan is deleted, return the book copy to stock
+  if (current.status === 'Active' && current.bookId) {
+    const books = await readJsonCollection('books.json');
+    const book = books.find((b) => String(b.id) === String(current.bookId));
+    if (book) {
+      const availableCopies = Number(book.availableCopies || 0) + 1;
+      await updateRecord('books.json', book.id, { availableCopies, status: 'Available' });
+    }
+  }
+
+  const deleted = await deleteRecord('loans.json', id);
+  return Response.json({ success: deleted });
 }

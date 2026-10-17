@@ -1,4 +1,4 @@
-import { createRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
+import { createRecord, deleteRecord, readJsonCollection, updateRecord } from '../../../lib/jsonStore';
 import { forbiddenResponse, getSessionUser, isStaff, unauthorizedResponse } from '../../../lib/serverAuth';
 import { syncOverdueFines } from '../../../lib/fineUtils';
 
@@ -155,7 +155,28 @@ export async function PUT(request) {
   const records = await readJsonCollection('requests.json');
   const current = records.find((item) => String(item.id) === String(payload.id));
   if (!current) return Response.json({ error: 'Request not found' }, { status: 404 });
-  const allowedStatuses = ['Accepted', 'Rejected', 'Issued', 'Not Available'];
+
+  if (payload.action === 'edit' && isStaff(user)) {
+    const updates = { ...payload };
+    delete updates.action;
+    delete updates.id;
+    if (payload.status === 'Returned' && current.status !== 'Returned') {
+      updates.returnDate = payload.returnDate || new Date().toISOString().slice(0, 10);
+      if (current.bookId) {
+        const books = await readJsonCollection('books.json');
+        const book = books.find((b) => String(b.id) === String(current.bookId));
+        if (book) {
+          const availableCopies = Number(book.availableCopies || 0) + 1;
+          await updateRecord('books.json', book.id, { availableCopies, status: 'Available' });
+        }
+      }
+      try { await syncOverdueFines(); } catch {}
+    }
+    const updated = await updateRecord('requests.json', current.id, updates);
+    return Response.json(updated);
+  }
+
+  const allowedStatuses = ['Accepted', 'Rejected', 'Issued', 'Not Available', 'Returned', 'Cancelled'];
   if (!allowedStatuses.includes(payload.status)) return Response.json({ error: 'Invalid request status' }, { status: 400 });
   if (current.status === payload.status) {
     if (current.status === 'Issued' && current.loanId) {
@@ -274,4 +295,17 @@ export async function PUT(request) {
     });
   }
   return Response.json(updated);
+}
+
+export async function DELETE(request) {
+  const user = await getSessionUser(request);
+  if (!user) return unauthorizedResponse();
+  if (!isStaff(user)) return forbiddenResponse();
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  if (!id) return Response.json({ error: 'Request id is required' }, { status: 400 });
+
+  const deleted = await deleteRecord('requests.json', id);
+  return Response.json({ success: deleted });
 }

@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "loanId": "",
+    "bookId": "book-1",
+    "title": "The Great Gatsby",
+    "studentEmail": "student@pratap.com",
+    "studentName": "Riya Patil",
+    "issueDate": "2026-10-17",
+    "dueDate": "",
+    "overdueDays": 0,
+    "fineRatePerDay": 10,
+    "amount": 10,
+    "reason": "Damaged Book",
+    "createdAt": "2026-10-17T04:18:31.867Z",
+    "paymentDeadlineAt": "2026-10-24T04:18:31.867Z",
+    "paymentStatus": "Pending",
+    "paymentMethod": "",
+    "paymentReference": "",
+    "paymentNotes": "",
+    "paidAt": null,
+    "paymentHistory": [],
+    "id": "7c7abcac-d63c-4a54-960d-e68d95a343df"
+  }
+]
