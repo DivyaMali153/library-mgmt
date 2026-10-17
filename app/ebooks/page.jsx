@@ -96,8 +96,16 @@ export default function EbooksPage() {
         </Table>
       </CardContent></Card>
 
-      <EbookList showHeader={false} />
-      <UploadEbookDialog open={uploadOpen} onClose={() => setUploadOpen(false)} onUploaded={() => { load(); setUploadOpen(false); setMessage('E-book uploaded.'); }} />
+      <EbookList showHeader={false} ebooks={ebooks} onRefresh={load} />
+      <UploadEbookDialog
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onUploaded={(newBook) => {
+          load();
+          setUploadOpen(false);
+          setMessage(`E-book "${newBook?.title || ''}" uploaded successfully.`);
+        }}
+      />
     </Box>
   );
 }

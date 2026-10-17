@@ -46,8 +46,8 @@ export default function EbookDetails({ ebook, canRead = false }) {
               <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap">
                 <Chip label={ebook.category || 'General'} color="primary" />
                 <Chip
-                  label={ebook.availability === 'Available' ? 'Available' : 'Unavailable'}
-                  color={ebook.availability === 'Available' ? 'success' : 'default'}
+                  label={String(ebook.availability || ebook.status || 'Available').toLowerCase() !== 'unavailable' ? 'Available' : 'Unavailable'}
+                  color={String(ebook.availability || ebook.status || 'Available').toLowerCase() !== 'unavailable' ? 'success' : 'default'}
                 />
               </Stack>
               <Typography variant="h6" fontWeight={700}>{ebook.author}</Typography>

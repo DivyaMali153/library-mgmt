@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -14,24 +14,48 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import EbookCard from "./EbookCard";
 
-export default function EbookList({ showHeader = true }) {
-  const [ebooks, setEbooks] = useState([]);
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const res = await fetch("/api/ebooks");
+export default function EbookList({ showHeader = true, ebooks: propEbooks, onRefresh }) {
+  const [internalEbooks, setInternalEbooks] = useState([]);
+
+  const fetchEbooks = useCallback(async () => {
+    try {
+      const res = await fetch("/api/ebooks", { cache: "no-store" });
+      if (res.ok) {
         const data = await res.json();
-        if (!active) return;
-        setEbooks((data || []).filter((ebook) => (ebook.availability || ebook.status) === "Available"));
-      } catch (e) {
-        console.error(e);
+        setInternalEbooks(data || []);
       }
-    })();
-    return () => {
-      active = false;
-    };
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
+
+  useEffect(() => {
+    if (propEbooks === undefined) {
+      fetchEbooks();
+    }
+
+    const handleUpdate = () => {
+      if (onRefresh) {
+        onRefresh();
+      } else {
+        fetchEbooks();
+      }
+    };
+
+    window.addEventListener("ebook-updated", handleUpdate);
+    return () => {
+      window.removeEventListener("ebook-updated", handleUpdate);
+    };
+  }, [propEbooks, fetchEbooks, onRefresh]);
+
+  const rawEbooks = propEbooks !== undefined ? propEbooks : internalEbooks;
+
+  const ebooks = useMemo(() => {
+    return (rawEbooks || []).filter((ebook) => {
+      const status = String(ebook.availability || ebook.status || "Available").toLowerCase();
+      return status !== "unavailable" && status !== "archived" && status !== "not available";
+    });
+  }, [rawEbooks]);
 
   const [query, setQuery] = useState("");
 
@@ -44,8 +68,10 @@ export default function EbookList({ showHeader = true }) {
         ebook.title,
         ebook.author,
         ebook.category,
+        ebook.subject,
         ebook.description,
       ]
+        .filter(Boolean)
         .join(" ")
         .toLowerCase();
 

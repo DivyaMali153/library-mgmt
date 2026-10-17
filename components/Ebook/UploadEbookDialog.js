@@ -55,6 +55,9 @@ export default function UploadEbookDialog({ open, onClose, onUploaded }) {
         return;
       }
       onUploaded && onUploaded(result);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("ebook-updated"));
+      }
       setTitle("");
       setAuthor("");
       setDescription("");

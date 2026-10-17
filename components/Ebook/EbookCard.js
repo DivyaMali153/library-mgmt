@@ -113,10 +113,16 @@ export default function EbookCard({ ebook }) {
           />
           <Chip
             label={
-              ebook.availability === "Available" ? "Available" : "Unavailable"
+              String(ebook.availability || ebook.status || "Available").toLowerCase() !== "unavailable"
+                ? "Available"
+                : "Unavailable"
             }
             size="small"
-            color={ebook.availability === "Available" ? "success" : "default"}
+            color={
+              String(ebook.availability || ebook.status || "Available").toLowerCase() !== "unavailable"
+                ? "success"
+                : "default"
+            }
           />
         </Stack>
         <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
